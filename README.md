@@ -1,4 +1,4 @@
-# مكتبة gnapo (gnapo Library)
+# مكتبة gnazhpo (gnazhpo Library)
 
 ## مقدمة
 
@@ -17,13 +17,14 @@
 لاستخدام الدوال المتوفرة في المكتبة، قم بتثبيتها أولاً (إذا لم تكن مثبتة):
 
 ```bash
-pip install git+https://github.com/GNAZH1/gnapo-library.git
+pip install git+https://github.com/GNAZH1/gnapo-library.git # Note: Installs 'gnazhpo' package
 ```
 
-ثم قم باستيراد الوحدة `core` في السكريبت الخاص بك:
+ثم قم باستيراد الدوال المطلوبة مباشرة من الحزمة `gnazhpo` في السكريبت الخاص بك:
 
 ```python
-from gnapo import core
+from gnazhpo import compile_data_report, reset_item_status, dispatch_data, index_system_resources, check_system_latency, validate_configuration_syntax
+# أو يمكنك استيراد كل الدوال باستخدام: from gnazhpo import *
 ```
 
 ### دالة `compile_data_report`
@@ -56,7 +57,7 @@ source_data = "/path/to/your/logs"
 report_file = "/path/to/save/daily_report.zip" # الامتداد داخلي للتنظيم
 
 # استدعاء الدالة
-result, msg = core.compile_data_report(source_data, report_file)
+result, msg = compile_data_report(source_data, report_file)
 
 if result:
     print(f"تم تجميع التقرير بنجاح: {msg}")
@@ -92,7 +93,7 @@ success, message = core.reset_item_status(item_identifier)
 item_id_to_reset = "/path/to/processed_item.dat"
 
 # استدعاء الدالة
-result_reset, msg_reset = core.reset_item_status(item_id_to_reset)
+result_reset, msg_reset = reset_item_status(item_id_to_reset)
 
 if result_reset:
     print(f"تم إعادة ضبط حالة العنصر بنجاح: {msg_reset}")
@@ -131,7 +132,7 @@ api_token = "YOUR_SERVICE_API_KEY"
 user_id = "TARGET_RECIPIENT_ID"
 data_ref_path = "/path/to/your/status_update.log"
 
-result_dispatch, msg_dispatch = core.dispatch_data(api_token, user_id, data_ref_path, accompanying_notes="تحديث الحالة الأخير")
+result_dispatch, msg_dispatch = dispatch_data(api_token, user_id, data_ref_path, accompanying_notes="تحديث الحالة الأخير")
 if result_dispatch:
     print(f"تم إرسال البيانات بنجاح: {msg_dispatch}")
 else:
