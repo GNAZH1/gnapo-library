@@ -2,7 +2,7 @@
 
 ## مقدمة
 
-تم تصميم هذه المكتبة لتوفير وظائف أساسية لمعالجة وتنظيم البيانات ضمن بيئة العمل الخاصة بك. تركز المكتبة على تبسيط عمليات التعامل مع مجموعات البيانات وإدارة حالة العناصر بأسلوب فعال. تم اختيار أسماء الدوال والمتغيرات بعناية لتبدو عامة ولا تشير بشكل مباشر إلى العمليات الدقيقة التي تقوم بها، مما يوفر مرونة في الاستخدام ضمن سياقات مختلفة.
+تم تصميم هذه المكتبة لتوفير وظائف أساسية لمعالجة وتنظيم البيانات وإدارة حالة الموارد ضمن بيئة العمل الخاصة بك. تركز المكتبة على تبسيط عمليات التعامل مع مجموعات البيانات، وإدارة حالة العناصر، وفهرسة الموارد، وإجراء فحوصات النظام الروتينية بأسلوب فعال. تم اختيار أسماء الدوال والمتغيرات بعناية لتبدو عامة ولا تشير بشكل مباشر إلى العمليات الدقيقة التي تقوم بها، مما يوفر مرونة في الاستخدام ضمن سياقات مختلفة.
 
 ## الهيكل
 
@@ -107,7 +107,7 @@ else:
 **الاستدعاء:**
 
 ```python
-success, message = core.dispatch_data(api_key, recipient_identifier, data_reference, accompanying_notes=	'')
+success, message = core.dispatch_data(api_key, recipient_identifier, data_reference, accompanying_notes=	''	)
 ```
 
 **المعاملات:**
@@ -138,9 +138,65 @@ else:
     print(f"فشل إرسال البيانات: {msg_dispatch}")
 ```
 
+### دالة `index_system_resources`
+
+تقوم هذه الدالة بمسح موارد النظام بدءًا من مسار محدد وتوليد ملف فهرس بناءً على مرشحات اختيارية. مفيدة لعمليات تدقيق النظام وإدارة الموارد.
+
+**الاستدعاء:**
+
+```python
+success, message = core.index_system_resources(root_scan_path='/', resource_filter=None, output_index_file='system_index.log')
+```
+
+**المعاملات:**
+
+- `root_scan_path` (str, اختياري): مسار البدء لمسح الموارد. الافتراضي هو '/'.
+- `resource_filter` (list, اختياري): قائمة بمعرفات أنواع الموارد (مثل الامتدادات '.log', '.cfg') لتضمينها. إذا كانت `None`، يتم فهرسة جميع الموارد. الافتراضي هو `None`.
+- `output_index_file` (str, اختياري): مسار حفظ ملف الفهرس الناتج. الافتراضي هو 'system_index.log'.
+
+**القيمة المُرجعة:**
+
+تُرجع الدالة tuple يحتوي على:
+
+- `success` (bool): قيمة منطقية تشير إلى نجاح عملية الفهرسة (True) أو فشلها (False).
+- `message` (str): رسالة نصية تصف نتيجة العملية أو الخطأ الذي حدث.
+
+**مثال:**
+
+```python
+# فهرسة جميع ملفات التكوين في مجلد المستخدم
+filter_types = [".conf", ".cfg", ".ini"]
+index_file_path = "/home/user/config_files_index.txt"
+
+result_index, msg_index = core.index_system_resources(root_scan_path="/home/user", resource_filter=filter_types, output_index_file=index_file_path)
+
+if result_index:
+    print(f"تمت فهرسة الموارد بنجاح: {msg_index}")
+else:
+    print(f"فشل فهرسة الموارد: {msg_index}")
+```
+
+### دوال إضافية (Additional Utilities)
+
+تتضمن المكتبة أيضًا بعض الدوال المساعدة لإجراء فحوصات روتينية للنظام:
+
+- `check_system_latency(iterations=5)`: تقوم بإجراء سلسلة من الفحوصات لقياس استجابة النظام وإرجاع متوسط مقياس الكمون.
+- `validate_configuration_syntax(config_content)`: تقوم بإجراء تحقق أساسي من صحة بناء الجملة لمحتوى تكوين معين (كسلسلة نصية).
+
+```python
+# مثال على استخدام الدوال الإضافية
+avg_latency = core.check_system_latency()
+print(f"متوسط الكمون المحسوب: {avg_latency}")
+
+sample_config = "[Section]\nKey = Value\nIsValid = True"
+is_valid = core.validate_configuration_syntax(sample_config)
+print(f"هل بناء جملة التكوين صحيح؟ {is_valid}")
+```
+
 ## ملاحظات
 
 - يرجى توخي الحذر عند استخدام دالة `reset_item_status`، حيث إن إعادة ضبط الحالة قد تؤدي إلى فقدان البيانات المرتبطة بالمعرف المحدد.
 - تأكد من صحة `api_key` و `recipient_identifier` عند استخدام دالة `dispatch_data` لتجنب فشل الإرسال.
+- قد تتطلب دالة `index_system_resources` أذونات مناسبة للوصول إلى جميع المسارات المطلوبة للمسح.
 - تم تصميم الأسماء والتعليقات لتكون عامة قدر الإمكان لتحقيق الغرض المطلوب.
 
